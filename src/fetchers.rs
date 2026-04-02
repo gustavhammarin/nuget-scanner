@@ -12,9 +12,7 @@ pub struct NugetDependencyFetcher {
 impl NugetDependencyFetcher {
     pub fn new() -> Result<Self, Box<dyn Error>> {
         Ok(Self {
-            client: reqwest::Client::builder()
-                .user_agent("nuget-scanner")
-                .build()?,
+            client: reqwest::Client::new(),
         })
     }
     pub async fn fetch_dependencies(
