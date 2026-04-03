@@ -4,6 +4,24 @@ A CLI tool that recursively resolves all transitive dependencies of a NuGet pack
 
 ## Installation
 
+### Linux / macOS
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/gustavhammarin/nuget-scanner/main/install.sh | sh
+```
+
+The script detects your OS and architecture, downloads the latest release binary to `~/.local/bin`, and adds it to your `PATH`. Reload your shell after:
+
+```sh
+source ~/.bashrc   # or ~/.zshrc
+```
+
+### Windows
+
+Download the binary manually from the [releases page](../../releases) — see the table below.
+
+### Manual download
+
 Download a pre-built binary from the [releases page](../../releases) for your platform:
 
 | Platform | Binary |
