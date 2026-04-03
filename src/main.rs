@@ -2,13 +2,14 @@ use std::{collections::HashSet, error::Error};
 
 use async_recursion::async_recursion;
 use clap::{Parser};
-use comfy_table::Table;
+use crossterm::event::{self, Event, KeyCode};
 
-use crate::{fetchers::NugetDependencyFetcher, osv::VulnFetcher, schemas::Package};
+use crate::{fetchers::NugetDependencyFetcher, osv::VulnFetcher, schemas::Package, tui::{App, draw}};
 mod schemas;
 mod helpers;
 mod fetchers;
 mod osv;
+mod tui;
 
 #[derive(Parser)]
 #[command(name = "nuget-scanner")]
@@ -27,6 +28,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let mut seen: HashSet<String> = HashSet::new();
     let mut all_deps: HashSet<Package> = HashSet::new();
 
+    all_deps.insert(Package { package_id: cli.package_id.clone(), version: cli.version.clone() });
+
     let client = NugetDependencyFetcher::new()?;
 
     println!("Gathering data...");
@@ -37,20 +40,23 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let vuln_fetcher = VulnFetcher::new();
     let vulns = vuln_fetcher.fetch_vulnerabilities(all_deps.clone()).await?;
 
-    let mut table = Table::new();
-    table.set_header(vec!["ID", "SUMMARY"]);
+    let mut terminal = ratatui::init();
+    let mut app = App::new(vulns);
 
-    for vuln in vulns{
-        let summary = vuln.summary.unwrap_or_default();
-        let id = vuln.id;
+    loop {
+        terminal.draw(|f| draw(f, &mut app))?;
 
-        table.add_row(vec![
-            &id,
-            &summary
-        ]);
+        if let Event::Key(key) = event::read()? {
+            match key.code {
+                KeyCode::Down | KeyCode::Char('j') => app.next(),
+                KeyCode::Up   | KeyCode::Char('k') => app.prev(),
+                KeyCode::Char('q') | KeyCode::Esc  => break,
+                _ => {}
+            }
+        }
     }
 
-    println!("{table}");
+    ratatui::restore();
     Ok(())
 }
 
