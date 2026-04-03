@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-REPO="dittnamn/nuget-scanner"  # ← byt till ditt repo
+REPO="gustavhammarin/nuget-scanner"  # ← byt till ditt repo
 BINARY="nuget-scanner"
 INSTALL_DIR="$HOME/.local/bin"
 
