@@ -1,6 +1,18 @@
 # nuget-scanner
 
-A CLI tool that recursively resolves all transitive dependencies of a NuGet package and checks them for known vulnerabilities using the [OSV](https://osv.dev) database.
+A CLI tool that recursively resolves all transitive dependencies of a NuGet package and checks them for known vulnerabilities using the [OSV](https://osv.dev) database. Results are displayed in an interactive terminal UI.
+
+## Installation
+
+Download a pre-built binary from the [releases page](../../releases) for your platform:
+
+| Platform | Binary |
+|---|---|
+| Linux x86_64 | `nuget-scanner-x86_64-unknown-linux-gnu` |
+| Linux arm64 | `nuget-scanner-aarch64-unknown-linux-gnu` |
+| macOS x86_64 | `nuget-scanner-x86_64-apple-darwin` |
+| macOS arm64 (Apple Silicon) | `nuget-scanner-aarch64-apple-darwin` |
+| Windows x86_64 | `nuget-scanner-x86_64-pc-windows-msvc.exe` |
 
 ## Usage
 
@@ -22,23 +34,19 @@ nuget-scanner <PACKAGE_ID> <VERSION> <TARGET_FRAMEWORK>
 nuget-scanner Microsoft.EntityFrameworkCore 8.0.2 net8.0
 ```
 
-Output:
+Results are shown in an interactive TUI. Navigate with:
 
-```
-Gathering data...
-Checking for vulnerabilites...
-+---------------+-------------------------------+
-| ID            | SUMMARY                       |
-+===============+===============================+
-| GHSA-xxxx-... | Some vulnerability summary    |
-+---------------+-------------------------------+
-```
+| Key | Action |
+|---|---|
+| `j` / `↓` | Next row |
+| `k` / `↑` | Previous row |
+| `q` / `Esc` | Quit |
 
 ## How it works
 
 1. Fetches the dependency graph of the given package from the NuGet registry, recursively resolving all transitive dependencies for the specified target framework.
 2. Queries the OSV API for each resolved dependency to find known vulnerabilities.
-3. Prints a table of all findings with their OSV ID and summary.
+3. Displays all findings in an interactive terminal table with OSV ID and summary.
 
 ## Build
 
